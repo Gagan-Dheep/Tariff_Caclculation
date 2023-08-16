@@ -1,0 +1,39 @@
+#include <stdio.h>
+
+int main() {
+    int typeOfLoad, timeOfLoad;
+    float energyUtilized, fixedCharge, rateOfCharge, customerCharge, electricalDuty;
+    float totalBill;
+
+    printf("Enter type of load (1 for domestic, 2 for industrial): ");
+    scanf("%d", &typeOfLoad);
+
+    printf("Enter time of load (in hours): ");
+    scanf("%d", &timeOfLoad);
+
+    printf("Enter amount of energy utilized (in units): ");
+    scanf("%f", &energyUtilized);
+
+    // Set the values of charges and duty based on type of load
+    if (typeOfLoad == 1) {
+        fixedCharge = 100.0;
+        rateOfCharge = 5.0;
+        customerCharge = 20.0;
+        electricalDuty = 2.0;
+    } else if (typeOfLoad == 2) {
+        fixedCharge = 200.0;
+        rateOfCharge = 7.0;
+        customerCharge = 30.0;
+        electricalDuty = 3.0;
+    } else {
+        printf("Invalid type of load entered.\n");
+        return 1;
+    }
+
+    // Calculate total bill
+    totalBill = fixedCharge + (rateOfCharge * energyUtilized) + customerCharge + electricalDuty;
+
+    printf("Total bill: %.2f\n", totalBill);
+
+    return 0;
+}
