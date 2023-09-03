@@ -1,39 +1,74 @@
 #include <stdio.h>
+#include <stdlib.h>
+
+// Define a structure to store consumer information
+struct Consumer {
+    char name[50];
+    char type;      // 'D' for domestic, 'I' for industrial
+    int time;       // Time at which load is required (in hours)
+    double energy;  // Amount of energy utilized (in kWh)
+    double tariff;  // Calculated tariff
+};
+
+// Function to calculate the electricity tariff
+void calculateTariff(struct Consumer *consumer) {
+    consumer->tariff = 0.0;
+
+    // Calculate based on the type of consumer
+    if (consumer->type == 'D') {
+        consumer->tariff = 0.1 * consumer->energy; // Domestic consumers pay $0.1 per kWh
+    } else if (consumer->type == 'I') {
+        consumer->tariff = 0.15 * consumer->energy; // Industrial consumers pay $0.15 per kWh
+    } else {
+        printf("Invalid consumer type for %s.\n", consumer->name);
+    }
+
+    // Apply time-dependent charges
+    if (consumer->time >= 9 && consumer->time <= 17) {
+        consumer->tariff += 0.05 * consumer->energy; // Additional daytime charge
+    } else {
+        consumer->tariff += 0.03 * consumer->energy; // Lower nighttime charge
+    }
+}
 
 int main() {
-    int typeOfLoad, timeOfLoad;
-    float energyUtilized, fixedCharge, rateOfCharge, customerCharge, electricalDuty;
-    float totalBill;
+    int numConsumers;
 
-    printf("Enter type of load (1 for domestic, 2 for industrial): ");
-    scanf("%d", &typeOfLoad);
+    // Read the number of consumers from the user
+    printf("Enter the number of consumers: ");
+    scanf("%d", &numConsumers);
 
-    printf("Enter time of load (in hours): ");
-    scanf("%d", &timeOfLoad);
-
-    printf("Enter amount of energy utilized (in units): ");
-    scanf("%f", &energyUtilized);
-
-    // Set the values of charges and duty based on type of load
-    if (typeOfLoad == 1) {
-        fixedCharge = 100.0;
-        rateOfCharge = 5.0;
-        customerCharge = 20.0;
-        electricalDuty = 2.0;
-    } else if (typeOfLoad == 2) {
-        fixedCharge = 200.0;
-        rateOfCharge = 7.0;
-        customerCharge = 30.0;
-        electricalDuty = 3.0;
-    } else {
-        printf("Invalid type of load entered.\n");
+    // Allocate memory for an array of Consumer structures
+    struct Consumer *consumers = (struct Consumer *)malloc(numConsumers * sizeof(struct Consumer));
+    if (consumers == NULL) {
+        printf("Memory allocation failed. Exiting...\n");
         return 1;
     }
 
-    // Calculate total bill
-    totalBill = fixedCharge + (rateOfCharge * energyUtilized) + customerCharge + electricalDuty;
+    // Read consumer data from the user
+    for (int i = 0; i < numConsumers; i++) {
+        printf("Enter consumer %d information:\n", i + 1);
+        printf("Name: ");
+        scanf("%s", consumers[i].name);
+        printf("Type (D for domestic, I for industrial): ");
+        scanf(" %c", &consumers[i].type); // Note the space before %c to consume newline characters
+        printf("Time (in hours): ");
+        scanf("%d", &consumers[i].time);
+        printf("Energy consumed (in kWh): ");
+        scanf("%lf", &consumers[i].energy);
 
-    printf("Total bill: %.2f\n", totalBill);
+        // Calculate the tariff for the consumer
+        calculateTariff(&consumers[i]);
+    }
+
+    // Display the calculated tariffs for each consumer
+    printf("\nElectricity Tariffs:\n");
+    for (int i = 0; i < numConsumers; i++) {
+        printf("Name: %s, Type: %c, Tariff: $%.2lf\n", consumers[i].name, consumers[i].type, consumers[i].tariff);
+    }
+
+    // Free dynamically allocated memory
+    free(consumers);
 
     return 0;
 }
